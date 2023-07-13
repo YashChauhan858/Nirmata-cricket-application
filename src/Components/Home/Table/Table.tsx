@@ -16,7 +16,7 @@ const Table = () => {
     <div className="flex flex-col">
       <div className="rounded relative h-96 overflow-y-auto">
         <table className="w-full text-sm text-left text-gray-500 table-auto">
-          <thead className="text-sm bg-secondary sticky top-0">
+          <thead className="text-sm bg-secondary sticky top-0 z-10">
             <tr>
               {tableHeader.map((heading) => (
                 <th
@@ -45,7 +45,7 @@ const Table = () => {
                       <img
                         src={externalLink}
                         alt="open-in-external-page"
-                        className="object-contain h-5 ml-3"
+                        className="icon-color object-contain h-5 ml-3"
                       />
                     </div>
                   </th>

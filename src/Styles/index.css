@@ -16,3 +16,10 @@ body,
   height: 100%;
   width: 100%;
 }
+
+@layer utilities {
+  .icon-color {
+    filter: invert(82%) sepia(12%) saturate(176%) hue-rotate(179deg)
+      brightness(100%) contrast(89%);
+  }
+}
