@@ -1,9 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { Suspense } from 'react'
 /** --------------- @Pages ---------------------- */
-import { Home } from '@Pages'
-/** --------------- @Component ------------------ */
-import { Component } from '@Components'
+import { Home, PlayerDetails } from '@Pages'
 
 function App() {
   return (
@@ -11,7 +9,7 @@ function App() {
       <Suspense>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/player-details" element={<Component />} />
+          <Route path="/player-details" element={<PlayerDetails />} />
           <Route path="*" element={<h1>404</h1>} />
         </Routes>
       </Suspense>
