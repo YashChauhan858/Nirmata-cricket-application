@@ -1,13 +1,12 @@
 import { Component } from '@Components'
-import './App.css'
 import { Home } from '@Pages'
 
 function App() {
   return (
-    <>
+    <div className="flex h-full">
       <Component />
       <Home />
-    </>
+    </div>
   )
 }
 
