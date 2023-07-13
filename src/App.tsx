@@ -7,7 +7,7 @@ import { Component } from '@Components'
 
 function App() {
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-primary">
       <Suspense>
         <Routes>
           <Route path="/" element={<Home />} />
