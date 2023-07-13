@@ -19,7 +19,7 @@ const Table = () => {
   const navigateToPlayerDetailsPage = (playerDetails: TPlayer) => {
     navigate('/player-details', { state: playerDetails })
   }
-    return (
+  return (
     <div className="flex flex-col">
       <div className="rounded relative h-96 overflow-y-auto">
         <table className="w-full text-sm text-left text-gray-500 table-auto">
