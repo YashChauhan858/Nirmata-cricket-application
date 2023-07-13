@@ -1,6 +1,9 @@
 import { getDateByEpoch, getPlayers } from '@Utils'
 import { useQuery } from '@tanstack/react-query'
 
+/** ---------------- @Images_Icons ------------------- */
+import externalLink from '@Assets/externalLink.png'
+
 const Table = () => {
   const tableHeader = ['Name', 'Type', 'Points', 'Rank', 'Age']
 
@@ -35,9 +38,16 @@ const Table = () => {
                     title={playerDetails?.name ?? ''}
                     className="px-6 py-4 text-textColor font-medium whitespace-nowrap cursor-pointer hover:font-semibold"
                   >
-                    <p className="w-60 text-ellipsis overflow-hidden">
-                      {playerDetails?.name ?? '-'}
-                    </p>
+                    <div className="w-full flex items-center">
+                      <p className="text-ellipsis overflow-hidden w-60">
+                        {playerDetails?.name ?? '-'}
+                      </p>
+                      <img
+                        src={externalLink}
+                        alt="open-in-external-page"
+                        className="object-contain h-5 ml-3"
+                      />
+                    </div>
                   </th>
                   <td className="px-6 py-4 text-textColor">
                     {playerDetails?.type ?? '-'}

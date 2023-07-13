@@ -19,7 +19,8 @@
     "paths": {
       "@Components": ["Components"], // for index.ts
       "@Pages": ["Pages"], // for index.ts
-      "@Utils": ["Utils"] // for index.ts
+      "@Utils": ["Utils"], // for index.ts
+      "@Assets": ["assets"] // for index.ts
     },
 
     /* Linting */
