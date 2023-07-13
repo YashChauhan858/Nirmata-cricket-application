@@ -1,10 +1,13 @@
-import { getDateByEpoch, getPlayers } from '@Utils'
+import { TPlayer, getDateByEpoch, getPlayers } from '@Utils'
 import { useQuery } from '@tanstack/react-query'
 
 /** ---------------- @Images_Icons ------------------- */
 import externalLink from '@Assets/externalLink.png'
+import { useNavigate } from 'react-router-dom'
 
 const Table = () => {
+  const navigate = useNavigate()
+
   const tableHeader = ['Name', 'Type', 'Points', 'Rank', 'Age']
 
   const { data, isLoading } = useQuery({
@@ -12,7 +15,11 @@ const Table = () => {
     queryFn: getPlayers,
   })
   const isValidList = !!data && data?.length !== 0 && !isLoading
-  return (
+
+  const navigateToPlayerDetailsPage = (playerDetails: TPlayer) => {
+    navigate('/player-details', { state: playerDetails })
+  }
+    return (
     <div className="flex flex-col">
       <div className="rounded relative h-96 overflow-y-auto">
         <table className="w-full text-sm text-left text-gray-500 table-auto">
@@ -37,6 +44,7 @@ const Table = () => {
                     scope="row"
                     title={playerDetails?.name ?? ''}
                     className="px-6 py-4 text-textColor font-medium whitespace-nowrap cursor-pointer hover:font-semibold"
+                    onClick={() => navigateToPlayerDetailsPage(playerDetails)}
                   >
                     <div className="w-full flex items-center">
                       <p className="text-ellipsis overflow-hidden w-60">
