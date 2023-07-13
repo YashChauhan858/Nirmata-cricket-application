@@ -14,6 +14,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    // alias
+    "baseUrl": "./src",
+    "paths": {
+      "@Components": ["Components"], // for index.ts
+      "@Pages": ["Pages"] // for index.ts
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
