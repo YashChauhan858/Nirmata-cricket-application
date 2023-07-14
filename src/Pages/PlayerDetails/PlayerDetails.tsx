@@ -60,7 +60,7 @@ const PlayerDetails = () => {
             <p className="text-textColor text-base h-16">
               {getDateByEpoch(playerData?.dob ?? 0)}
             </p>
-            <p className="text-textColor text-base h-16">
+            <p className="text-textColor text-base h-16 pb-24">
               {playerData?.description ?? '-'}
             </p>
           </div>
