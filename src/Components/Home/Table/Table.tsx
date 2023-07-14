@@ -4,21 +4,46 @@ import { useQuery } from '@tanstack/react-query'
 /** ---------------- @Images_Icons ------------------- */
 import externalLink from '@Assets/externalLink.png'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 const Table = () => {
   const navigate = useNavigate()
 
   const tableHeader = ['Name', 'Type', 'Points', 'Rank', 'Age']
 
-  const { data, isLoading } = useQuery({
+  const [cricketerList, setCricketerList] = useState<TPlayer[]>([])
+  const [setsearchByName, setSearchByName] = useState<string>('')
+
+  const { data: cricketerData, isLoading } = useQuery<TPlayer[]>({
     queryKey: ['AllPlayersDetails'],
     queryFn: getPlayers,
+    onSuccess: (data) => {
+      const isValidList = !!data && data?.length !== 0
+      if (isValidList) {
+        setCricketerList(data)
+      } else {
+        setCricketerList([])
+      }
+    },
+    refetchOnWindowFocus: false,
   })
-  const isValidList = !!data && data?.length !== 0 && !isLoading
 
   const navigateToPlayerDetailsPage = (playerDetails: TPlayer) => {
     navigate('/player-details', { state: playerDetails })
   }
+
+  const filterListByCricketerName = (name: string) => {
+    setSearchByName(name)
+    if (name) {
+      const searchList = cricketerData?.filter((cricketer) =>
+        cricketer.name?.toLowerCase()?.includes(name.toLocaleLowerCase()),
+      )
+      setCricketerList(searchList ?? [])
+    } else {
+      setCricketerList(cricketerData ?? [])
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="rounded relative h-96 overflow-y-auto">
@@ -35,11 +60,31 @@ const Table = () => {
                 </th>
               ))}
             </tr>
+            <tr>
+              <th className="p-2">
+                <input
+                  type="text"
+                  className="font-normal p-2 rounded focus:outline-none"
+                  placeholder="Search By Name"
+                  value={setsearchByName}
+                  onChange={({ target: { value } }) =>
+                    filterListByCricketerName(value)
+                  }
+                />
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
           </thead>
           <tbody className="h-52 overflow-hidden overflow-y-auto">
-            {isValidList &&
-              data.map((playerDetails) => (
-                <tr key={playerDetails.id} className="bg-white border-b">
+            {cricketerList.length !== 0 &&
+              cricketerList.map((playerDetails) => (
+                <tr
+                  key={playerDetails.id}
+                  className="border-b border-textColor h-10"
+                >
                   <th
                     scope="row"
                     title={playerDetails?.name ?? ''}
@@ -71,7 +116,7 @@ const Table = () => {
                   </td>
                 </tr>
               ))}
-            {!isLoading && data?.length === 0 && (
+            {!isLoading && cricketerList?.length === 0 && (
               <tr className="border-b">
                 <td
                   colSpan={5}
