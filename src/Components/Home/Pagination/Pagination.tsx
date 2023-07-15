@@ -27,7 +27,7 @@ const Pagination = ({
         {totalNumberOfPages > 0 &&
           Array(totalNumberOfPages)
             .fill(1)
-            .map((p, index) => (
+            .map((_, index) => (
               <li>
                 <p
                   onClick={() => setPage(index + 1)}
