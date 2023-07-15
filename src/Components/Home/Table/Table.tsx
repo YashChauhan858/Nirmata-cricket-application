@@ -3,6 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+/** ---------------- @Components --------------------- */
+import { DropDown } from '@Components'
+
 /** ---------------- @Images_Icons ------------------- */
 import externalLink from '@Assets/externalLink.png'
 import sort from '@Assets/sort.png'
@@ -27,6 +30,7 @@ const Table = () => {
 
   const [cricketerList, setCricketerList] = useState<TPlayer[]>([])
   const [setsearchByName, setSearchByName] = useState<string>('')
+  const [dropDownState, setDropDownState] = useState<string>('')
 
   const { data: cricketerData, isLoading } = useQuery<TPlayer[]>({
     queryKey: ['AllPlayersDetails'],
@@ -148,7 +152,13 @@ const Table = () => {
               </th>
               <th></th>
               <th></th>
-              <th></th>
+              <th>
+                <DropDown
+                  dropDownList={['1', '2', '3']}
+                  getDropDown={(a) => setDropDownState(a)}
+                  dropValue={dropDownState}
+                />
+              </th>
               <th></th>
             </tr>
           </thead>
