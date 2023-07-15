@@ -1,5 +1,8 @@
 import { useState } from 'react'
 
+/** ------------ @Image ---------------- */
+import arrow from '@Assets/arrow.svg'
+
 interface IDropDown {
   dropDownList: string[]
   getDropDown: (a: string) => void
@@ -21,22 +24,8 @@ const DropDown = ({ dropDownList, getDropDown, dropValue }: IDropDown) => {
         type="button"
         onClick={() => setDropDownToggler(!dropDownToggler)}
       >
-        {dropValue === '' ? 'Select type' : dropValue}
-        <svg
-          className="w-2.5 h-2.5 ml-2.5"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="m1 1 4 4 4-4"
-          />
-        </svg>
+        {dropValue === 'All' ? 'Select type' : dropValue}
+        <img src={arrow} alt="" className="w-2.5 h-2.5 ml-2.5" />
       </button>
       {dropDownToggler && (
         <div id="dropdown" className="z-10 relative">

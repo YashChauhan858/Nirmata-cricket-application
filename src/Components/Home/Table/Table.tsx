@@ -30,7 +30,7 @@ const Table = () => {
 
   const [cricketerList, setCricketerList] = useState<TPlayer[]>([])
   const [setsearchByName, setSearchByName] = useState<string>('')
-  const [dropDownState, setDropDownState] = useState<string>('')
+  const [dropDownState, setDropDownState] = useState<string>('All')
 
   const { data: cricketerData, isLoading } = useQuery<TPlayer[]>({
     queryKey: ['AllPlayersDetails'],
@@ -50,12 +50,13 @@ const Table = () => {
   const onDropDownStateChangeHandler = (cricketerType: string) => {
     if (cricketerType === 'All') {
       setCricketerList(cricketerData ?? [])
-      return
+    } else {
+      setCricketerList([
+        ...(cricketerData?.filter(
+          (details) => details.type === cricketerType,
+        ) ?? []),
+      ])
     }
-    setCricketerList([
-      ...(cricketerData?.filter((details) => details.type === cricketerType) ??
-        []),
-    ])
     setDropDownState(cricketerType)
   }
 
