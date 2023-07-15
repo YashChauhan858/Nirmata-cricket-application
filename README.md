@@ -5,11 +5,26 @@ The Nirmata Cricket App is a web application that lists cricket players along wi
 ## Features
 
 - List of cricket players with the following stats:
+
   - Name
   - Type
   - Points
   - Rank
   - Age
+
+- List filteration on the bases of following field:
+
+  - Search By Name
+  - Search By Type
+
+- List sorting based on following filed:
+
+  - Name
+  - Rank
+  - Age
+
+- Pagination
+- A player's detail page at ( /player-details ) which furthur shows details of the selected player, along with similar players based on type.
 
 ## Tech Stack
 
