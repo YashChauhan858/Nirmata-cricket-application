@@ -13,7 +13,6 @@ const Pagination = ({
   setPage,
   currentPage,
 }: IPagination) => {
-  console.log(currentPage)
   return (
     <nav aria-label="Page navigation example">
       <ul className="inline-flex -space-x-px text-sm">

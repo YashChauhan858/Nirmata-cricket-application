@@ -1,4 +1,9 @@
-import { TPlayer, getDateByEpoch, getPlayers } from '@Utils'
+import {
+  TPlayer,
+  divideArrayIntoChunks,
+  getDateByEpoch,
+  getPlayers,
+} from '@Utils'
 import { useQuery } from '@tanstack/react-query'
 
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +14,7 @@ import { DropDown } from '@Components'
 /** ---------------- @Images_Icons ------------------- */
 import externalLink from '@Assets/externalLink.png'
 import sort from '@Assets/sort.png'
+import Pagination from '../Pagination/Pagination'
 
 interface ISortOrder {
   Age: 'asc' | 'desc'
@@ -28,9 +34,36 @@ const Table = () => {
     Rank: 'asc',
   })
 
-  const [cricketerList, setCricketerList] = useState<TPlayer[]>([])
+  const [cricketerList, setCricketerList] = useState<TPlayer[][]>([[]])
   const [setsearchByName, setSearchByName] = useState<string>('')
   const [dropDownState, setDropDownState] = useState<string>('All')
+  const [paginationState, setPaginationState] = useState({
+    currentPage: 1,
+    totalNumberOfPages: 0,
+    pageSize: 10,
+  })
+
+  const incrementPage = () =>
+    setPaginationState((prevState) => ({
+      ...prevState,
+      currentPage:
+        prevState.currentPage === prevState.totalNumberOfPages
+          ? prevState.currentPage
+          : prevState.currentPage + 1,
+    }))
+  const decrementPage = () =>
+    setPaginationState((prevState) => ({
+      ...prevState,
+      currentPage:
+        prevState.currentPage === 1
+          ? prevState.currentPage
+          : prevState.currentPage - 1,
+    }))
+  const selectPageFromPaginationList = (page: number) =>
+    setPaginationState((prevState) => ({
+      ...prevState,
+      currentPage: page,
+    }))
 
   const { data: cricketerData, isLoading } = useQuery<TPlayer[]>({
     queryKey: ['AllPlayersDetails'],
@@ -38,9 +71,14 @@ const Table = () => {
     onSuccess: (data) => {
       const isValidList = !!data && data?.length !== 0
       if (isValidList) {
-        setCricketerList(data)
+        setCricketerList(divideArrayIntoChunks(data, paginationState.pageSize))
+        setPaginationState((prevState) => ({
+          ...prevState,
+          currentPage: 1,
+          totalNumberOfPages: Math.ceil(data.length / paginationState.pageSize),
+        }))
       } else {
-        setCricketerList([])
+        setCricketerList([[]])
       }
     },
     refetchOnWindowFocus: false,
@@ -48,14 +86,19 @@ const Table = () => {
 
   const typeList = ['All', 'allRounder', 'batsman', 'bowler', 'wicketKeeper']
   const onDropDownStateChangeHandler = (cricketerType: string) => {
+    const dividedData = divideArrayIntoChunks(
+      cricketerData ?? [],
+      paginationState.pageSize,
+    )
     if (cricketerType === 'All') {
-      setCricketerList(cricketerData ?? [])
+      setCricketerList(dividedData)
     } else {
-      setCricketerList([
-        ...(cricketerData?.filter(
-          (details) => details.type === cricketerType,
-        ) ?? []),
-      ])
+      setCricketerList((prevState) => {
+        prevState[paginationState.currentPage - 1] = dividedData[
+          paginationState.currentPage - 1
+        ].filter((details) => details.type === cricketerType)
+        return [...prevState]
+      })
     }
     setDropDownState(cricketerType)
   }
@@ -66,31 +109,51 @@ const Table = () => {
 
   const filterListByCricketerName = (name: string) => {
     setSearchByName(name)
+    const dividedData = divideArrayIntoChunks(
+      cricketerData ?? [],
+      paginationState.pageSize,
+    )
     if (name) {
-      const searchList = cricketerData?.filter((cricketer) =>
-        cricketer.name?.toLowerCase()?.includes(name.toLocaleLowerCase()),
-      )
-      setCricketerList(searchList ?? [])
+      setCricketerList((prevState) => {
+        prevState[paginationState.currentPage - 1] = dividedData[
+          paginationState.currentPage - 1
+        ]?.filter((cricketer) =>
+          cricketer.name?.toLowerCase()?.includes(name.toLocaleLowerCase()),
+        )
+        return [...prevState]
+      })
     } else {
-      setCricketerList(cricketerData ?? [])
+      setCricketerList(dividedData)
     }
   }
 
   const sortListByColumnType = (columnType: string) => {
+    const dividedData = divideArrayIntoChunks(
+      cricketerData ?? [],
+      paginationState.pageSize,
+    )
     if (columnType === 'Age') {
-      setCricketerList((prevState) =>
-        sortOrder.Age === 'asc'
-          ? [...prevState.sort((a, b) => (a.dob ?? 0) - (b.dob ?? 0))]
-          : [...prevState.sort((a, b) => (b.dob ?? 0) - (a.dob ?? 0))],
-      )
+      setCricketerList((prevState) => {
+        prevState[paginationState.currentPage - 1] =
+          sortOrder.Age === 'asc'
+            ? dividedData[paginationState.currentPage - 1].sort(
+                (a, b) => (a.dob ?? 0) - (b.dob ?? 0),
+              )
+            : dividedData[paginationState.currentPage - 1].sort(
+                (a, b) => (b.dob ?? 0) - (a.dob ?? 0),
+              )
+        return [...prevState]
+      })
       setSortOrder((prevState) => ({
         ...prevState,
         Age: prevState['Age'] === 'asc' ? 'desc' : 'asc',
       }))
     }
     if (columnType === 'Name') {
-      setCricketerList((prevState) => [
-        ...prevState.sort((a, b) => {
+      setCricketerList((prevState) => {
+        prevState[paginationState.currentPage - 1] = dividedData[
+          paginationState.currentPage - 1
+        ].sort((a, b) => {
           if ((a.name ?? '') < (b.name ?? '')) {
             return sortOrder.Name === 'asc' ? 1 : -1
           }
@@ -98,25 +161,33 @@ const Table = () => {
             return sortOrder.Name === 'asc' ? -1 : 1
           }
           return 0
-        }),
-      ])
+        })
+        return [...prevState]
+      })
       setSortOrder((prevState) => ({
         ...prevState,
         Name: prevState['Name'] === 'asc' ? 'desc' : 'asc',
       }))
     }
     if (columnType === 'Rank') {
-      setCricketerList((prevState) =>
-        sortOrder.Rank === 'asc'
-          ? [...prevState.sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0))]
-          : [...prevState.sort((a, b) => (b.rank ?? 0) - (a.rank ?? 0))],
-      )
+      setCricketerList((prevState) => {
+        prevState[paginationState.currentPage - 1] =
+          sortOrder.Rank === 'asc'
+            ? dividedData[paginationState.currentPage - 1].sort(
+                (a, b) => (a.rank ?? 0) - (b.rank ?? 0),
+              )
+            : dividedData[paginationState.currentPage - 1].sort(
+                (a, b) => (b.rank ?? 0) - (a.rank ?? 0),
+              )
+        return [...prevState]
+      })
       setSortOrder((prevState) => ({
         ...prevState,
         Rank: prevState['Rank'] === 'asc' ? 'desc' : 'asc',
       }))
     }
   }
+
   return (
     <div className="flex flex-col">
       <div className="rounded relative h-96 overflow-y-auto">
@@ -177,43 +248,45 @@ const Table = () => {
             </tr>
           </thead>
           <tbody className="h-52 overflow-hidden overflow-y-auto">
-            {cricketerList.length !== 0 &&
-              cricketerList.map((playerDetails) => (
-                <tr
-                  key={playerDetails.id}
-                  className="border-b border-textColor h-10"
-                >
-                  <th
-                    scope="row"
-                    title={playerDetails?.name ?? ''}
-                    className="px-6 py-4 text-textColor font-medium whitespace-nowrap cursor-pointer hover:font-semibold"
-                    onClick={() => navigateToPlayerDetailsPage(playerDetails)}
+            {cricketerList[paginationState.currentPage - 1].length !== 0 &&
+              cricketerList[paginationState.currentPage - 1].map(
+                (playerDetails) => (
+                  <tr
+                    key={playerDetails.id}
+                    className="border-b border-textColor h-10"
                   >
-                    <div className="w-full flex items-center">
-                      <p className="text-ellipsis overflow-hidden w-60">
-                        {playerDetails?.name ?? '-'}
-                      </p>
-                      <img
-                        src={externalLink}
-                        alt="open-in-external-page"
-                        className="icon-color object-contain h-5 ml-3"
-                      />
-                    </div>
-                  </th>
-                  <td className="px-6 py-4 text-textColor">
-                    {playerDetails?.rank ?? '-'}
-                  </td>
-                  <td className="px-6 py-4 text-textColor">
-                    {getDateByEpoch(playerDetails?.dob ?? 0)}
-                  </td>
-                  <td className="px-6 py-4 text-textColor">
-                    {playerDetails?.type ?? '-'}
-                  </td>
-                  <td className="px-6 py-4 text-textColor">
-                    {playerDetails?.points ?? '-'}
-                  </td>
-                </tr>
-              ))}
+                    <th
+                      scope="row"
+                      title={playerDetails?.name ?? ''}
+                      className="px-6 py-4 text-textColor font-medium whitespace-nowrap cursor-pointer hover:font-semibold"
+                      onClick={() => navigateToPlayerDetailsPage(playerDetails)}
+                    >
+                      <div className="w-full flex items-center">
+                        <p className="text-ellipsis overflow-hidden w-60">
+                          {playerDetails?.name ?? '-'}
+                        </p>
+                        <img
+                          src={externalLink}
+                          alt="open-in-external-page"
+                          className="icon-color object-contain h-5 ml-3"
+                        />
+                      </div>
+                    </th>
+                    <td className="px-6 py-4 text-textColor">
+                      {playerDetails?.rank ?? '-'}
+                    </td>
+                    <td className="px-6 py-4 text-textColor">
+                      {getDateByEpoch(playerDetails?.dob ?? 0)}
+                    </td>
+                    <td className="px-6 py-4 text-textColor">
+                      {playerDetails?.type ?? '-'}
+                    </td>
+                    <td className="px-6 py-4 text-textColor">
+                      {playerDetails?.points ?? '-'}
+                    </td>
+                  </tr>
+                ),
+              )}
             {!isLoading && cricketerList?.length === 0 && (
               <tr className="border-b">
                 <td
@@ -226,6 +299,15 @@ const Table = () => {
             )}
           </tbody>
         </table>
+      </div>
+      <div className="ml-auto mt-3">
+        <Pagination
+          totalNumberOfPages={paginationState.totalNumberOfPages}
+          currentPage={paginationState.currentPage}
+          increment={incrementPage}
+          decrement={decrementPage}
+          setPage={(page) => selectPageFromPaginationList(page)}
+        />
       </div>
     </div>
   )
