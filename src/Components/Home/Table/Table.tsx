@@ -46,7 +46,18 @@ const Table = () => {
     refetchOnWindowFocus: false,
   })
 
-  const typeList = ['allRounder', 'batsman', 'bowler', 'wicketKeeper']
+  const typeList = ['All', 'allRounder', 'batsman', 'bowler', 'wicketKeeper']
+  const onDropDownStateChangeHandler = (cricketerType: string) => {
+    if (cricketerType === 'All') {
+      setCricketerList(cricketerData ?? [])
+      return
+    }
+    setCricketerList([
+      ...(cricketerData?.filter((details) => details.type === cricketerType) ??
+        []),
+    ])
+    setDropDownState(cricketerType)
+  }
 
   const navigateToPlayerDetailsPage = (playerDetails: TPlayer) => {
     navigate('/player-details', { state: playerDetails })
@@ -157,7 +168,7 @@ const Table = () => {
               <th>
                 <DropDown
                   dropDownList={typeList}
-                  getDropDown={(a) => setDropDownState(a)}
+                  getDropDown={onDropDownStateChangeHandler}
                   dropValue={dropDownState}
                 />
               </th>
