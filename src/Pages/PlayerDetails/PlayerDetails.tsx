@@ -1,7 +1,9 @@
-import { TPlayer, getDateByEpoch } from '@Utils'
+import { TPlayer, getDateByEpoch, getPlayers } from '@Utils'
 /** ---------------- @Image_Icons ----------------- */
 import backButton from '@Assets/backButton.png'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { SimilarPlayers } from '@Components'
 
 const PlayerDetails = () => {
   const location = useLocation()
@@ -11,9 +13,15 @@ const PlayerDetails = () => {
 
   const navigateBackToList = () => navigate('/', { replace: true })
 
+  const { data: cricketerData } = useQuery<TPlayer[]>({
+    queryKey: ['AllPlayersDetails'],
+    queryFn: getPlayers,
+    refetchOnWindowFocus: false,
+  })
+
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <div className="rounded-lg bg-secondary w-3/4 mx-auto p-10 pb-14">
+    <div className="w-full h-full p-10  flex gap-3">
+      <div className="rounded-lg bg-secondary w-3/5 p-10 pb-14">
         <div className="flex gap-2 mb-10 ">
           <div
             className="bg-primary flex items-center rounded-sm"
@@ -65,6 +73,12 @@ const PlayerDetails = () => {
             </p>
           </div>
         </div>
+      </div>
+      <div className="w-20">
+        <SimilarPlayers
+          tableData={cricketerData ?? []}
+          typeToSeparate={playerData.type ?? ''}
+        />
       </div>
     </div>
   )
