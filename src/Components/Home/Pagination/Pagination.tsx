@@ -32,8 +32,10 @@ const Pagination = ({
                 <p
                   onClick={() => setPage(index + 1)}
                   className={` ${
-                    index + 1 === currentPage ? 'text-primary bg-textColor' : ''
-                  } cursor-pointer text-textColor flex items-center justify-center px-3 h-8 text-gray-500 bg-white border border-gray-300 hover:text-primary hover:bg-textColor transition-all duration-200`}
+                    index + 1 === currentPage
+                      ? 'text-primary bg-textColor'
+                      : 'text-textColor'
+                  } cursor-pointer  flex items-center justify-center px-3 h-8 text-gray-500 bg-white border border-gray-300 hover:text-primary hover:bg-textColor transition-all duration-200`}
                 >
                   {index + 1}
                 </p>
