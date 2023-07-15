@@ -46,6 +46,8 @@ const Table = () => {
     refetchOnWindowFocus: false,
   })
 
+  const typeList = ['allRounder', 'batsman', 'bowler', 'wicketKeeper']
+
   const navigateToPlayerDetailsPage = (playerDetails: TPlayer) => {
     navigate('/player-details', { state: playerDetails })
   }
@@ -142,7 +144,7 @@ const Table = () => {
               <th className="p-2">
                 <input
                   type="text"
-                  className="font-normal p-2 rounded focus:outline-none"
+                  className="font-normal p-2 rounded focus:outline-none text-primary bg-textColor"
                   placeholder="Search By Name"
                   value={setsearchByName}
                   onChange={({ target: { value } }) =>
@@ -154,7 +156,7 @@ const Table = () => {
               <th></th>
               <th>
                 <DropDown
-                  dropDownList={['1', '2', '3']}
+                  dropDownList={typeList}
                   getDropDown={(a) => setDropDownState(a)}
                   dropValue={dropDownState}
                 />
