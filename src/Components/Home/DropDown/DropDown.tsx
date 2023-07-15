@@ -47,7 +47,7 @@ const DropDown = ({ dropDownList, getDropDown, dropValue }: IDropDown) => {
                   key={dropDownValue}
                   onClick={() => selectValueAndCloseDropDown(dropDownValue)}
                 >
-                  <p className="cursor-pointer rounded-lg block px-4 py-2 mt-1 text-primary bg-textColor font-medium">
+                  <p className="cursor-pointer rounded-lg block px-4 py-2 mt-1 text-primary bg-textColor font-medium hover:opacity-90 transition-opacity duration-200">
                     {dropDownValue}
                   </p>
                 </li>
